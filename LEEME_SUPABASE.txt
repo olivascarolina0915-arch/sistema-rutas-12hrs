@@ -1,0 +1,18 @@
+SISTEMA DE RUTAS CHIHUAHUA v2.5 — SINCRONIZACIÓN EN LÍNEA
+
+1) Entra a tu proyecto de Supabase.
+2) Abre SQL Editor.
+3) Crea una consulta nueva.
+4) Copia y ejecuta todo el contenido de CONFIGURAR_SUPABASE.sql.
+5) Después sube a GitHub todos los archivos de esta carpeta reemplazando la versión anterior.
+6) Espera a que GitHub Pages termine el despliegue y abre el sitio con recarga completa.
+
+Qué cambia:
+- Las rutas se siguen guardando localmente como respaldo.
+- También se sincronizan con Supabase.
+- Al abrir el sistema desde otra computadora o celular, descarga las rutas de Supabase.
+- El avance de manzanas recorridas se sincroniza.
+- El sistema actualiza la lista al volver a enfocar la ventana y cada 30 segundos.
+
+IMPORTANTE:
+Esta configuración inicial permite que cualquier visitante de la página pública pueda leer, crear, modificar o eliminar rutas. Es adecuada para una prueba o equipo controlado. Si necesitas acceso por usuarios/contraseña, agrega Supabase Auth y políticas RLS por usuario/equipo.
