@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sistema de Rutas Chihuahua</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@6.11.2/dist/maplibre-gl.css" />
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@6.11.2/dist/maplibre-gl.css" />
+  <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@6.11.2/dist/maplibre-gl.js"></script>
+  <script>
+    if (!window.maplibregl) {
+      document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/5.6.1/maplibre-gl.js"><\/script>');
+    }
+  </script>
+  <script>
+    if (!window.maplibregl) {
+      document.write('<script src="https://unpkg.com/maplibre-gl@6.11.2/dist/maplibre-gl.js"><\/script>');
+    }
+  </script>
+  <style>
+    :root{--bg:#f4f6f8;--panel:#fff;--text:#17202a;--muted:#6b7280;--line:#d9dee6;--accent:#1f4f82;--accent2:#2f6faa;--ok:#26834a;--warn:#c27a16;--danger:#b63c3c;--shadow:0 8px 28px rgba(18,30,45,.10)}
+    *{box-sizing:border-box} html,body{height:100%;margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--text);background:var(--bg)}
+    .app{height:100%;display:grid;grid-template-columns:360px minmax(0,1fr)}
+    .sidebar{background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0;z-index:3}.brand{padding:18px 20px;border-bottom:1px solid var(--line)}.brand h1{font-size:18px;margin:0 0 4px}.brand p{font-size:12px;color:var(--muted);margin:0}.scroll{overflow:auto;padding:14px 16px 24px}.card{border:1px solid var(--line);border-radius:12px;padding:13px;margin-bottom:12px;background:#fff}.card h2{font-size:13px;margin:0 0 10px}.row{display:flex;gap:8px;align-items:center}.row>*{min-width:0}.stack{display:grid;gap:8px}
+    label{font-size:12px;font-weight:600;color:#48515d}.hint{font-size:11px;color:var(--muted);line-height:1.35}.field{display:grid;gap:5px}.input,.select{width:100%;height:38px;border:1px solid #cfd6df;border-radius:8px;padding:0 10px;font:inherit;font-size:13px;background:#fff}.input:focus,.select:focus{outline:2px solid rgba(47,111,170,.18);border-color:var(--accent2)}
+    button{height:38px;border:0;border-radius:8px;padding:0 11px;font:600 12px Arial;cursor:pointer}.btn-primary{background:var(--accent);color:#fff}.btn-secondary{background:#edf2f7;color:#24364a}.btn-danger{background:#faecec;color:#8e2727}.btn-ghost{background:#fff;border:1px solid var(--line);color:#394554}.btn-primary:hover{background:#173f69}button:disabled{opacity:.45;cursor:not-allowed}
+    .toggle{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #edf0f3}.toggle:last-child{border-bottom:0}.toggle span{font-size:12px}.switch{position:relative;width:38px;height:22px}.switch input{display:none}.slider{position:absolute;inset:0;background:#d5dbe3;border-radius:999px}.slider:before{content:"";position:absolute;width:16px;height:16px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.22)}.switch input:checked+.slider{background:var(--accent2)}.switch input:checked+.slider:before{transform:translateX(16px)}
+    .mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.mode{height:auto;min-height:42px;padding:8px;text-align:left;border:1px solid var(--line);background:#fff;color:#34404f}.mode.active{border-color:var(--accent2);background:#eef5fb;color:#153e66}.mode small{display:block;font-weight:400;color:var(--muted);margin-top:2px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.progress-box{display:none;border:1px solid #cfe3d5;background:#f3fbf5;border-radius:10px;padding:10px}.progress-box.active{display:block}.progress-head{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:12px}.progress-bar{height:8px;background:#e3e8ee;border-radius:999px;overflow:hidden;margin-top:8px}.progress-bar>span{display:block;height:100%;width:0;background:#26834a;transition:width .2s}.status-badge{display:inline-flex;align-items:center;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:700;background:#eef2f7;color:#48515d}.status-badge.active{background:#e4f5e9;color:#1d6b3b}.stat{padding:9px 8px;border-radius:9px;background:#f5f7fa}.stat strong{display:block;font-size:17px}.stat span{font-size:10px;color:var(--muted)}
+    .map-wrap{position:relative;min-width:0}.map{position:absolute;inset:0}.topbar{position:absolute;left:14px;right:14px;top:14px;display:flex;gap:8px;align-items:center;pointer-events:none;z-index:2}.topbar>*{pointer-events:auto}.searchbox{background:#fff;border-radius:10px;box-shadow:var(--shadow);display:flex;gap:6px;padding:6px;width:min(520px,calc(100% - 90px))}.searchbox .input{border:0;height:36px}.pill{background:#fff;box-shadow:var(--shadow);border-radius:10px;height:48px;padding:0 12px;display:flex;align-items:center;font-size:11px;color:#4f5966}.toast{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);background:#1f2937;color:#fff;padding:10px 13px;border-radius:9px;font-size:12px;box-shadow:var(--shadow);display:none;z-index:9}.legend{position:absolute;right:14px;bottom:30px;background:#fff;border-radius:10px;box-shadow:var(--shadow);padding:9px 11px;font-size:10px;line-height:1.6;z-index:2}.dot{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}.route-list{display:grid;gap:6px;max-height:180px;overflow:auto}.route-item{border:1px solid var(--line);border-radius:8px;padding:8px}.route-item strong{font-size:12px}.route-item p{font-size:10px;color:var(--muted);margin:3px 0 7px}.route-actions{display:flex;gap:5px}.route-actions button{height:28px;font-size:10px;padding:0 8px}.marker{width:27px;height:27px;border-radius:50%;border:2px solid white;color:#fff;font-weight:700;display:grid;place-items:center;box-shadow:0 2px 7px rgba(0,0,0,.32);font-size:11px}.marker-start{background:var(--ok)}.marker-end{background:var(--danger)}.marker-point{background:var(--accent)}
+    .loading{position:absolute;inset:0;display:grid;place-items:center;background:#eef2f6;z-index:6}.loading>div{background:white;border:1px solid var(--line);border-radius:12px;padding:16px 20px;box-shadow:var(--shadow);font-size:13px;color:#445}.loading.hidden{display:none}.mobile-menu{display:none}
+    @media(max-width:900px){.app{grid-template-columns:1fr}.sidebar{position:absolute;left:10px;top:74px;bottom:10px;width:min(340px,calc(100% - 20px));border:0;border-radius:14px;box-shadow:var(--shadow);display:none}.sidebar.open{display:flex}.topbar{left:10px;right:10px}.mobile-menu{display:inline-flex!important}.legend{display:none}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><h1>Sistema de Rutas Chihuahua</h1><p>OpenStreetMap · Colonias · Secciones · Manzanas</p></div>
+    <div class="scroll">
+      <div class="card stack">
+        <h2>Ruta actual</h2>
+        <div class="field"><label for="routeName">Nombre</label><input class="input" id="routeName" placeholder="Ej. Quintas Carolinas 01"></div>
+        <div class="row"><div class="field" style="flex:1"><label for="responsable">Responsable</label><input class="input" id="responsable" placeholder="Nombre"></div><div class="field" style="width:108px"><label for="hours">Horas objetivo</label><input class="input" id="hours" type="number" min="1" max="24" value="12"></div></div>
+        <div class="stats"><div class="stat"><strong id="selectedCount">0</strong><span>manzanas</span></div><div class="stat"><strong id="routePointCount">0</strong><span>puntos</span></div><div class="stat"><strong id="distanceKm">0.0</strong><span>km de ruta</span></div></div>
+      </div>
+      <div class="card"><h2>Herramientas del mapa</h2><div class="mode-grid">
+        <button class="mode active" data-mode="select">Seleccionar<small>manzanas</small></button>
+        <button class="mode" data-mode="start">Inicio<small>marca salida</small></button>
+        <button class="mode" data-mode="route">Trazar<small>puntos de paso</small></button>
+        <button class="mode" data-mode="end">Final<small>marca llegada</small></button>
+      </div><p class="hint" style="margin-bottom:0">Marca inicio, puntos de paso y final. La línea azul muestra el orden antes de calcular el recorrido por calles.</p></div>
+      <div class="card"><h2>Capas</h2>
+        <div class="toggle"><span>Colonias</span><label class="switch"><input id="layerColonias" type="checkbox" checked><span class="slider"></span></label></div>
+        <div class="toggle"><span>Secciones</span><label class="switch"><input id="layerSecciones" type="checkbox" checked><span class="slider"></span></label></div>
+        <div class="toggle"><span>Manzanas</span><label class="switch"><input id="layerManzanas" type="checkbox"><span class="slider"></span></label></div>
+      </div>
+      <div class="card stack"><h2>Trazado</h2>
+        <div class="field"><label for="travelMode">Tipo de recorrido</label><select id="travelMode" class="select"><option value="pedestrian">A pie</option><option value="bicycle">Bicicleta</option><option value="auto">Vehículo</option></select></div>
+        <button class="btn-primary" id="calcRoute">Calcular por calles</button>
+        <div class="row"><button class="btn-secondary" id="undoPoint" style="flex:1">Deshacer punto</button><button class="btn-secondary" id="clearPath" style="flex:1">Limpiar línea</button></div>
+        <p class="hint" id="routeHint" style="margin:0">El cálculo usa un servicio abierto de ruteo basado en OpenStreetMap. La línea manual siempre queda disponible como respaldo.</p>
+      </div>
+      <div class="card stack"><h2>Ruta</h2><button class="btn-primary" id="startRoute">▶ Iniciar ruta</button><button class="btn-secondary" id="finishRoute" disabled>✓ Finalizar ruta</button><button class="btn-primary" id="saveRoute">Guardar ruta</button><button class="btn-ghost" id="newRoute">Nueva ruta</button></div>
+      <div class="card"><h2>Rutas guardadas</h2><div id="routeList" class="route-list"><p class="hint">Todavía no hay rutas guardadas.</p></div></div>
+    </div>
+  </aside>
+  <main class="map-wrap">
+    <div id="map" class="map"></div>
+    <div id="loading" class="loading"><div>Abriendo mapa de Chihuahua…</div></div>
+    <div class="topbar"><button class="btn-primary mobile-menu" id="mobileMenu">☰</button><div class="searchbox"><input id="search" class="input" placeholder="Buscar colonia o sección"><button id="searchBtn" class="btn-secondary">Buscar</button></div><div class="pill" id="zoomPill">Zoom —</div></div>
+    <div class="legend"><div><span class="dot" style="background:#d9dee6"></span>Manzana</div><div><span class="dot" style="background:#2f6faa"></span>Seleccionada</div><div><span class="dot" style="background:#2f9e57"></span>Recorrida</div><div><span class="dot" style="background:#26834a"></span>Inicio</div><div><span class="dot" style="background:#b63c3c"></span>Final</div></div>
+    <div id="toast" class="toast"></div>
+  </main>
+</div>
+<script>
+(()=>{
+  const $=id=>document.getElementById(id);
+  const dataUrls={colonias:'data/colonias.geojson',secciones:'data/secciones.geojson',manzanas:'data/manzanas.geojson'};
+  const S={map:null,mode:'select',geo:{},selected:new Set(),selectedIds:new Map(),completed:new Set(),activeRouteId:null,isRunning:false,start:null,end:null,routePoints:[],routeGeometry:null,markers:{start:null,end:null,points:[]},layersReady:{colonias:false,secciones:false,manzanas:false}};
+  let toastTimer;
+  function toast(msg){const e=$('toast');e.textContent=msg;e.style.display='block';clearTimeout(toastTimer);toastTimer=setTimeout(()=>e.style.display='none',2600)}
+  function setMode(mode){S.mode=mode;document.querySelectorAll('.mode').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));}
+  document.querySelectorAll('.mode').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));
+  $('mobileMenu').addEventListener('click',()=>$('sidebar').classList.toggle('open'));
+
+  if(typeof maplibregl==='undefined'){ $('loading').innerHTML='<div><strong>No se pudo cargar la librería del mapa.</strong><br><span style="font-size:11px;color:#6b7280">Tu red puede estar bloqueando los servidores externos del mapa. Prueba desde otra red o abre el sistema en Chrome/Edge.</span></div>'; return; }
+  const style={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
+  S.map=new maplibregl.Map({container:'map',style,center:[-106.0889,28.6353],zoom:12,minZoom:9,maxZoom:20});
+  S.map.addControl(new maplibregl.NavigationControl(),'bottom-right');
+  S.map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-left');
+  S.map.on('load',async()=>{
+    $('loading').classList.add('hidden');
+    addRouteSources();
+    await Promise.all([loadLayer('colonias'),loadLayer('secciones')]);
+    renderRoutes();
+    $('zoomPill').textContent='Zoom '+S.map.getZoom().toFixed(1);
+  });
+  S.map.on('zoom',()=>{const z=S.map.getZoom();$('zoomPill').textContent='Zoom '+z.toFixed(1); if(z>=14&&$('layerManzanas').checked&&!S.layersReady.manzanas)loadLayer('manzanas')});
+  S.map.on('click',e=>mapClick(e));
+
+  async function fetchGeo(name){if(S.geo[name])return S.geo[name];const r=await fetch(dataUrls[name]);if(!r.ok)throw new Error('No se pudo leer '+name);return S.geo[name]=await r.json()}
+  function addRouteSources(){
+    S.map.addSource('route-manual',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
+    S.map.addLayer({id:'route-manual',type:'line',source:'route-manual',paint:{'line-color':'#2f6faa','line-width':4,'line-opacity':.72}});
+    S.map.addSource('route-auto',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
+    S.map.addLayer({id:'route-auto',type:'line',source:'route-auto',paint:{'line-color':'#153e66','line-width':6,'line-opacity':.92}});
+  }
+  function layerIds(name){return name==='colonias'?['colonias-fill','colonias-line']:name==='secciones'?['secciones-fill','secciones-line']:['manzanas-fill','manzanas-line']}
+  async function loadLayer(name){
+    if(S.layersReady[name]){setVisibility(name,true);return}
+    try{
+      const g=await fetchGeo(name);
+      S.map.addSource(name,{type:'geojson',data:g,generateId:name==='manzanas'});
+      if(name==='colonias'){
+        S.map.addLayer({id:'colonias-fill',type:'fill',source:name,paint:{'fill-color':'#8d98a5','fill-opacity':.055}});
+        S.map.addLayer({id:'colonias-line',type:'line',source:name,paint:{'line-color':'#5d6874','line-width':1,'line-opacity':.75}});
+        S.map.on('click','colonias-fill',e=>{if(S.mode==='select'&&e.features[0])toast('Colonia: '+(e.features[0].properties.NOMBRE||'—'))});
+      } else if(name==='secciones'){
+        S.map.addLayer({id:'secciones-fill',type:'fill',source:name,paint:{'fill-color':'#6f42c1','fill-opacity':0.01}});
+        S.map.addLayer({id:'secciones-line',type:'line',source:name,paint:{'line-color':'#6f42c1','line-width':1.2,'line-opacity':.62}});
+        S.map.on('click','secciones-fill',e=>{if(S.mode==='select'&&e.features[0])toast('Sección: '+(e.features[0].properties.SECCION||'—'))});
+      } else {
+        S.map.addLayer({id:'manzanas-fill',type:'fill',source:name,minzoom:13.5,paint:{'fill-color':['case',['boolean',['feature-state','completed'],false],'#2f9e57',['boolean',['feature-state','selected'],false],'#2f6faa','#cfd6df'],'fill-opacity':['case',['boolean',['feature-state','selected'],false],.58,.17]}});
+        S.map.addLayer({id:'manzanas-line',type:'line',source:name,minzoom:13.5,paint:{'line-color':['case',['boolean',['feature-state','completed'],false],'#1f7a43',['boolean',['feature-state','selected'],false],'#1f4f82','#8d98a5'],'line-width':['case',['boolean',['feature-state','selected'],false],2,.6]}});
+        S.map.on('click','manzanas-fill',e=>{if(!e.features[0])return;if(S.isRunning){toggleCompleted(e.features[0]);return}if(S.mode==='select')selectBlock(e.features[0])});
+        S.map.on('mouseenter','manzanas-fill',()=>S.map.getCanvas().style.cursor='pointer');
+        S.map.on('mouseleave','manzanas-fill',()=>S.map.getCanvas().style.cursor='');
+      }
+      S.layersReady[name]=true;
+    }catch(err){console.error(err);toast('No se pudo cargar la capa '+name)}
+  }
+  function setVisibility(name,on){layerIds(name).forEach(id=>{if(S.map.getLayer(id))S.map.setLayoutProperty(id,'visibility',on?'visible':'none')})}
+  $('layerColonias').addEventListener('change',e=>e.target.checked?loadLayer('colonias'):setVisibility('colonias',false));
+  $('layerSecciones').addEventListener('change',e=>e.target.checked?loadLayer('secciones'):setVisibility('secciones',false));
+  $('layerManzanas').addEventListener('change',e=>{if(!e.target.checked){setVisibility('manzanas',false);return}if(S.map.getZoom()<13.5){toast('Acércate un poco para mostrar las manzanas');S.map.easeTo({zoom:14});}loadLayer('manzanas')});
+
+  function blockKey(p){return String(p.CVEGEO||p.CVE_GEO||[p.SECCION,p.MANZANA,p.ID||p.OBJECTID||''].join('-'))}
+  function toggleCompleted(f){const key=blockKey(f.properties);if(!S.selected.has(key)){toast('Esta manzana no pertenece a la ruta');return}const id=f.id;const done=!S.completed.has(key);if(done)S.completed.add(key);else S.completed.delete(key);S.map.setFeatureState({source:'manzanas',id},{selected:true,completed:done});S.selectedIds.set(key,id);persistActiveProgress();updateStats();toast(done?'Manzana marcada como recorrida':'Manzana regresó a pendiente')}
+  function selectBlock(f){const key=blockKey(f.properties),id=f.id,selected=!S.selected.has(key);if(selected){S.selected.add(key);S.selectedIds.set(key,id)}else{S.selected.delete(key);S.selectedIds.delete(key)}S.map.setFeatureState({source:'manzanas',id},{selected});updateStats();toast(`${selected?'Seleccionada':'Quitada'} · Sección ${f.properties.SECCION||'—'} · Manzana ${f.properties.MANZANA||'—'}`)}
+
+  function mapClick(e){
+    if(S.mode==='select')return;
+    if(S.mode==='start'){S.start={lng:e.lngLat.lng,lat:e.lngLat.lat};putMarker('start',S.start,'I','marker-start');setMode('route')}
+    else if(S.mode==='end'){S.end={lng:e.lngLat.lng,lat:e.lngLat.lat};putMarker('end',S.end,'F','marker-end');drawManual();setMode('route')}
+    else if(S.mode==='route'){S.routePoints.push({lng:e.lngLat.lng,lat:e.lngLat.lat});refreshPointMarkers();drawManual();}
+  }
+  function markerEl(text,cls){const el=document.createElement('div');el.className='marker '+cls;el.textContent=text;return el}
+  function putMarker(which,pos,label,cls){if(S.markers[which])S.markers[which].remove();S.markers[which]=new maplibregl.Marker({element:markerEl(label,cls),anchor:'center'}).setLngLat([pos.lng,pos.lat]).addTo(S.map)}
+  function refreshPointMarkers(){S.markers.points.forEach(m=>m.remove());S.markers.points=[];S.routePoints.forEach((p,i)=>S.markers.points.push(new maplibregl.Marker({element:markerEl(String(i+1),'marker-point'),anchor:'center'}).setLngLat([p.lng,p.lat]).addTo(S.map)))}
+  function pathArray(){return [S.start,...S.routePoints,S.end].filter(Boolean)}
+  function drawManual(){S.routeGeometry=null;const p=pathArray();const data=p.length>1?{type:'Feature',geometry:{type:'LineString',coordinates:p.map(x=>[x.lng,x.lat])},properties:{}}:{type:'FeatureCollection',features:[]};S.map.getSource('route-auto').setData({type:'FeatureCollection',features:[]});S.map.getSource('route-manual').setData(data);updateStats()}
+  function hav(a,b){const R=6371,dLat=(b.lat-a.lat)*Math.PI/180,dLon=(b.lng-a.lng)*Math.PI/180,la1=a.lat*Math.PI/180,la2=b.lat*Math.PI/180;const h=Math.sin(dLat/2)**2+Math.cos(la1)*Math.cos(la2)*Math.sin(dLon/2)**2;return 2*R*Math.asin(Math.sqrt(h))}
+  function manualDistance(){const p=pathArray();let d=0;for(let i=1;i<p.length;i++)d+=hav(p[i-1],p[i]);return d}
+  function updateStats(){$('selectedCount').textContent=S.selected.size;$('routePointCount').textContent=S.routePoints.length;$('distanceKm').textContent=(S.routeGeometry?.distanceKm??manualDistance()).toFixed(1);const total=S.selected.size,done=S.completed.size,pct=total?Math.round(done*100/total):0;$('progressText').textContent=`${done} / ${total} (${pct}%)`;$('progressFill').style.width=pct+'%'}
+  $('undoPoint').addEventListener('click',()=>{if(!S.routePoints.length)return;S.routePoints.pop();refreshPointMarkers();drawManual()});
+  $('clearPath').addEventListener('click',()=>{S.routePoints=[];S.routeGeometry=null;refreshPointMarkers();drawManual();updateStats()});
+
+  $('calcRoute').addEventListener('click',async()=>{
+    if(!S.start||!S.end){toast('Marca primero Inicio y Final');return}
+    const btn=$('calcRoute');btn.disabled=true;btn.textContent='Calculando…';
+    try{
+      const locations=pathArray().map(p=>({lat:p.lat,lon:p.lng,type:'break'}));
+      const payload={locations,costing:$('travelMode').value,units:'kilometers',shape_format:'geojson',directions_options:{language:'es-ES',units:'kilometers'}};
+      const r=await fetch('https://valhalla1.openstreetmap.de/route',{method:'POST',headers:{'Content-Type':'application/json','X-Client-Id':'sistema-rutas-chihuahua-prototipo'},body:JSON.stringify(payload)});
+      if(!r.ok)throw new Error('HTTP '+r.status);
+      const j=await r.json();
+      const coords=[];for(const leg of (j.trip?.legs||[])){let shape=leg.shape;if(shape?.type==='LineString')shape=shape.coordinates;if(Array.isArray(shape)){if(coords.length&&shape.length&&coords[coords.length-1][0]===shape[0][0]&&coords[coords.length-1][1]===shape[0][1])shape=shape.slice(1);coords.push(...shape)}}
+      if(coords.length<2)throw new Error('Sin geometría');
+      const dist=Number(j.trip?.summary?.length||0);
+      S.routeGeometry={coordinates:coords,distanceKm:dist};
+      S.map.getSource('route-manual').setData({type:'FeatureCollection',features:[]});
+      S.map.getSource('route-auto').setData({type:'Feature',geometry:{type:'LineString',coordinates:coords},properties:{}});
+      updateStats();toast('Ruta calculada siguiendo calles');fitCoords(coords);
+    }catch(err){console.error(err);drawManual();toast('No se pudo calcular por calles; se conserva la línea manual')}
+    finally{btn.disabled=false;btn.textContent='Calcular por calles'}
+  });
+
+  function currentRoute(){return{id:(crypto.randomUUID?crypto.randomUUID():String(Date.now())),name:$('routeName').value.trim()||'Ruta sin nombre',responsable:$('responsable').value.trim(),hours:Number($('hours').value)||12,travelMode:$('travelMode').value,start:S.start,end:S.end,routePoints:S.routePoints,routeGeometry:S.routeGeometry,selected:[...S.selected],completed:[...S.completed],status:S.isRunning?'en_recorrido':'guardada',startedAt:S.isRunning?new Date().toISOString():null,created:new Date().toISOString()}}
+  function getRoutes(){try{return JSON.parse(localStorage.getItem('rutasChihuahuaV2')||'[]')}catch{return[]}}
+  function setRoutes(r){localStorage.setItem('rutasChihuahuaV2',JSON.stringify(r))}
+  function saveOrUpdateCurrent(forceStatus){if(!S.start||!S.end){toast('La ruta necesita Inicio y Final');return null}const arr=getRoutes();let r=currentRoute();if(S.activeRouteId){const i=arr.findIndex(x=>x.id===S.activeRouteId);if(i>=0){r={...arr[i],...r,id:S.activeRouteId,created:arr[i].created||r.created};if(forceStatus)r.status=forceStatus;arr[i]=r}else{r.id=S.activeRouteId;if(forceStatus)r.status=forceStatus;arr.unshift(r)}}else{if(forceStatus)r.status=forceStatus;arr.unshift(r);S.activeRouteId=r.id}setRoutes(arr);renderRoutes();return r}
+  function persistActiveProgress(){if(!S.activeRouteId)return;const arr=getRoutes();const i=arr.findIndex(x=>x.id===S.activeRouteId);if(i<0)return;arr[i].completed=[...S.completed];arr[i].status=S.isRunning?'en_recorrido':(arr[i].status||'guardada');arr[i].updated=new Date().toISOString();setRoutes(arr);renderRoutes()}
+  $('startRoute').addEventListener('click',()=>{if(!S.start||!S.end){toast('Marca Inicio y Final antes de iniciar');return}if(!S.selected.size){toast('Selecciona al menos una manzana');return}S.isRunning=true;const r=saveOrUpdateCurrent('en_recorrido');if(!r){S.isRunning=false;return}S.activeRouteId=r.id;$('progressBox').classList.add('active');$('startRoute').disabled=true;$('finishRoute').disabled=false;setMode('select');updateStats();toast('Ruta iniciada · toca las manzanas conforme las recorras')});
+  $('finishRoute').addEventListener('click',()=>{if(!S.isRunning)return;S.isRunning=false;const arr=getRoutes();const i=arr.findIndex(x=>x.id===S.activeRouteId);if(i>=0){arr[i].completed=[...S.completed];arr[i].status='finalizada';arr[i].finishedAt=new Date().toISOString();setRoutes(arr)}$('progressBox').classList.remove('active');$('startRoute').disabled=false;$('finishRoute').disabled=true;renderRoutes();toast('Ruta finalizada')});
+  $('saveRoute').addEventListener('click',()=>{const r=saveOrUpdateCurrent(S.isRunning?'en_recorrido':'guardada');if(r)toast('Ruta guardada en este navegador')});
+  $('newRoute').addEventListener('click',resetRoute);
+  function resetRoute(){
+    if(S.layersReady.manzanas){for(const [k,id] of S.selectedIds)S.map.setFeatureState({source:'manzanas',id},{selected:false})}
+    S.selected.clear();S.selectedIds.clear();S.completed.clear();S.activeRouteId=null;S.isRunning=false;S.start=S.end=null;S.routePoints=[];S.routeGeometry=null;
+    if(S.markers.start)S.markers.start.remove();if(S.markers.end)S.markers.end.remove();S.markers.points.forEach(m=>m.remove());S.markers={start:null,end:null,points:[]};
+    if(S.map.getSource('route-manual'))S.map.getSource('route-manual').setData({type:'FeatureCollection',features:[]});if(S.map.getSource('route-auto'))S.map.getSource('route-auto').setData({type:'FeatureCollection',features:[]});
+    $('routeName').value='';$('responsable').value='';$('hours').value=12;$('progressBox').classList.remove('active');$('startRoute').disabled=false;$('finishRoute').disabled=true;updateStats();toast('Nueva ruta lista')
+  }
+  function renderRoutes(){const el=$('routeList'),arr=getRoutes();if(!arr.length){el.innerHTML='<p class="hint">Todavía no hay rutas guardadas.</p>';return}el.innerHTML='';arr.forEach(r=>{const d=document.createElement('div');d.className='route-item';const done=r.completed?.length||0,total=r.selected?.length||0,status=r.status==='finalizada'?'Finalizada':r.status==='en_recorrido'?'En recorrido':'Guardada';d.innerHTML=`<strong>${esc(r.name)}</strong><p>${total} manzanas · ${done} recorridas · ${r.hours||12} h · ${status}</p><div class="route-actions"><button class="btn-secondary" data-open="${r.id}">Abrir</button><button class="btn-primary" data-startsaved="${r.id}">▶ Iniciar ruta</button><button class="btn-danger" data-del="${r.id}">Eliminar</button></div>`;el.appendChild(d)});el.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>openRoute(b.dataset.open));el.querySelectorAll('[data-startsaved]').forEach(b=>b.onclick=()=>{openRoute(b.dataset.startsaved,true)});el.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{setRoutes(getRoutes().filter(x=>x.id!==b.dataset.del));renderRoutes();toast('Ruta eliminada')})}
+  async function openRoute(id,autoStart=false){const r=getRoutes().find(x=>x.id===id);if(!r)return;resetRoute();S.activeRouteId=r.id;$('routeName').value=r.name||'';$('responsable').value=r.responsable||'';$('hours').value=r.hours||12;$('travelMode').value=r.travelMode||'pedestrian';S.start=r.start;S.end=r.end;S.routePoints=r.routePoints||[];S.routeGeometry=r.routeGeometry||null;S.selected=new Set(r.selected||[]);S.completed=new Set(r.completed||[]);if(S.start)putMarker('start',S.start,'I','marker-start');if(S.end)putMarker('end',S.end,'F','marker-end');refreshPointMarkers();if(S.routeGeometry?.coordinates){S.map.getSource('route-auto').setData({type:'Feature',geometry:{type:'LineString',coordinates:S.routeGeometry.coordinates},properties:{}});fitCoords(S.routeGeometry.coordinates)}else{drawManual();fitCoords(pathArray().map(p=>[p.lng,p.lat]))}if($('layerManzanas').checked||autoStart){$('layerManzanas').checked=true;await loadLayer('manzanas');const g=await fetchGeo('manzanas');for(let i=0;i<g.features.length;i++){const f=g.features[i],key=blockKey(f.properties);if(S.selected.has(key)){S.selectedIds.set(key,f.id??i);S.map.setFeatureState({source:'manzanas',id:f.id??i},{selected:true,completed:S.completed.has(key)})}}}if(r.status==='en_recorrido'||autoStart){S.isRunning=true;$('progressBox').classList.add('active');$('startRoute').disabled=true;$('finishRoute').disabled=false;if(autoStart){saveOrUpdateCurrent('en_recorrido')}}updateStats();toast(autoStart?'Ruta iniciada':'Ruta abierta')}
+  function esc(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+
+  function coordWalk(c,cb){if(typeof c[0]==='number'){cb(c);return}c.forEach(x=>coordWalk(x,cb))}
+  function featureBounds(f){const b=new maplibregl.LngLatBounds();coordWalk(f.geometry.coordinates,c=>b.extend(c));return b}
+  function fitCoords(coords){if(!coords?.length)return;const b=new maplibregl.LngLatBounds();coords.forEach(c=>b.extend(c));S.map.fitBounds(b,{padding:70,maxZoom:17})}
+  async function search(){const q=$('search').value.trim().toLowerCase();if(!q)return;for(const name of ['colonias','secciones']){const g=await fetchGeo(name);const f=g.features.find(x=>{const v=String(name==='colonias'?(x.properties.NOMBRE||''):(x.properties.SECCION||'')).toLowerCase();return v===q||v.includes(q)});if(f){S.map.fitBounds(featureBounds(f),{padding:60,maxZoom:16});toast(name==='colonias'?`Colonia: ${f.properties.NOMBRE}`:`Sección: ${f.properties.SECCION}`);return}}toast('No encontré coincidencia')}
+  $('searchBtn').addEventListener('click',search);$('search').addEventListener('keydown',e=>{if(e.key==='Enter')search()});
+})();
+</script>
+</body>
+</html>

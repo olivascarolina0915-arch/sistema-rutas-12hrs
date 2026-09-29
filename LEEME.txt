@@ -1,0 +1,36 @@
+SISTEMA DE RUTAS CHIHUAHUA v2.3
+
+SISTEMA DE RUTAS CHIHUAHUA - VERSIÓN 2
+
+MAPA BASE
+- MapLibre GL JS.
+- OpenStreetMap como mapa base.
+- No necesita API key de Google Maps.
+
+CAPAS INCLUIDAS
+- Colonias: 918 polígonos.
+- Secciones: 696 polígonos.
+- Manzanas: 23,711 polígonos.
+
+FUNCIONES
+- El mapa abre directamente sin pantalla de conexión.
+- Prender/apagar Colonias, Secciones y Manzanas.
+- Buscar colonia o sección.
+- Seleccionar manzanas.
+- Marcar punto de Inicio.
+- Agregar puntos de paso para definir el recorrido.
+- Marcar punto Final.
+- Línea manual previa del recorrido.
+- Calcular recorrido por calles en modo A pie, Bicicleta o Vehículo usando Valhalla/OpenStreetMap.
+- Guardar, abrir y eliminar rutas en el navegador.
+
+CÓMO ABRIR
+1. Haz doble clic en INICIAR_SISTEMA.bat.
+2. Se abrirá http://localhost:8000 en el navegador.
+3. Mantén abierta la ventana negra mientras utilizas el sistema.
+
+NOTAS
+- Se necesita conexión a internet para el mapa base y para calcular recorridos por calles.
+- Las rutas guardadas se almacenan por ahora en el navegador de esa computadora.
+- El servicio público de ruteo es adecuado para prototipo y pruebas; para una publicación institucional/multiusuario conviene instalar o contratar un servicio propio.
+- Las teselas públicas de OpenStreetMap tienen política de uso razonable; para despliegues con tráfico alto conviene contratar un proveedor de teselas o alojarlas.
